@@ -498,3 +498,41 @@ body {
     max-width: 100%;
   }
 }
+
+.app-footer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 16px 24px;
+  border-top: 1px solid var(--border);
+  font-size: 0.8rem;
+  color: var(--muted);
+  letter-spacing: 0.02em;
+}
+
+.footer-heart {
+  animation: heartbeat 1.8s ease-in-out infinite;
+  font-size: 1rem;
+}
+
+.footer-name {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+@keyframes heartbeat {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  20% {
+    transform: scale(1.3);
+  }
+  40% {
+    transform: scale(1);
+  }
+  60% {
+    transform: scale(1.15);
+  }
+}

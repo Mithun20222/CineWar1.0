@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { useGame } from "./hooks/useGame";
-import './App.css'
+import "./App.css";
 
 function Spinner() {
   return (
@@ -59,7 +59,7 @@ function FrameDisplay({ frame }) {
       <img
         src={frame.image_url}
         alt="Movie frame"
-        className={`frame-img ${loaded ? 'frame-visible' : 'frame-hidden'}`}
+        className={`frame-img ${loaded ? "frame-visible" : "frame-hidden"}`}
         onLoad={() => setLoaded(true)}
         onError={() => setLoaded(true)}
       />
@@ -248,6 +248,15 @@ export default function App() {
             </div>
           )}
         </main>
+
+        <footer className="app-footer">
+          <span>Made with</span>
+          <span className="footer-heart">❤️‍🔥</span>
+          <span>
+            by <span className="footer-name">Mithun</span> for his love of
+            cinema🎬
+          </span>
+        </footer>
       </div>
     </>
   );
