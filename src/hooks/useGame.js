@@ -13,6 +13,7 @@ const initialState = {
   score: 0,
   questionIndex: 0,
   error: null,
+  usedFrameIds: [],
 };
 
 function gameReducer(state, action) {
@@ -34,6 +35,7 @@ function gameReducer(state, action) {
         frame: action.frame,
         options: action.options,
         correctMovieId: action.correctMovieId,
+        usedFrameIds: [...state.usedFrameIds, action.frame.id],
       };
     case "ANSWER_SELECTED": {
       const isCorrect = action.movieId === state.correctMovieId;
@@ -66,10 +68,11 @@ export function useGame() {
     warmCache().catch(() => {});
   }, []);
 
-  const fetchNextQuestion = useCallback(async () => {
+  const fetchNextQuestion = useCallback(async (usedFrameIds = []) => {
     dispatch({ type: "LOADING" });
     try {
-      const { frame, options, correctMovieId } = await loadQuestion();
+      const { frame, options, correctMovieId } =
+        await loadQuestion(usedFrameIds);
       dispatch({ type: "QUESTION_LOADED", frame, options, correctMovieId });
     } catch (err) {
       dispatch({ type: "ERROR", message: err.message });
@@ -105,7 +108,7 @@ export function useGame() {
           });
         } else {
           dispatch({ type: "NEXT_QUESTION" });
-          dispatch({ type: "LOADING" });
+          fetchNextQuestion([...state.usedFrameIds, state.frame.id]);
         }
       }, FEEDBACK_DELAY_MS);
     },

@@ -1,4 +1,4 @@
-import { supabase } from './supabase';
+import { supabase } from "./supabase";
 
 let _moviesWithFramesCache = null;
 let _allMoviesCache = null;
@@ -13,12 +13,12 @@ async function getFrameCount() {
   }
 
   const { count, error } = await supabase
-    .from('frames')
-    .select('*', { count: 'exact', head: true })
-    .not('image_url', 'is', null);
+    .from("frames")
+    .select("*", { count: "exact", head: true })
+    .not("image_url", "is", null);
 
   if (error) throw new Error(`Frame count query failed: ${error.message}`);
-  if (!count) throw new Error('No frames found in database.');
+  if (!count) throw new Error("No frames found in database.");
 
   _frameCount = count;
   _cacheTimestamp = now;
@@ -32,11 +32,11 @@ async function getAllMovies() {
   }
 
   const { data, error } = await supabase
-    .from('movies')
-    .select('id, title, release_year, difficulty');
+    .from("movies")
+    .select("id, title, release_year, difficulty");
 
   if (error) throw new Error(`Movies fetch failed: ${error.message}`);
-  if (!data?.length) throw new Error('No movies found in database.');
+  if (!data?.length) throw new Error("No movies found in database.");
 
   _allMoviesCache = data;
   return _allMoviesCache;
@@ -49,11 +49,12 @@ async function getMoviesWithFrames() {
   }
 
   const { data, error } = await supabase
-    .from('frames')
-    .select('movie_id')
-    .not('image_url', 'is', null);
+    .from("frames")
+    .select("movie_id")
+    .not("image_url", "is", null);
 
-  if (error) throw new Error(`Movies with frames query failed: ${error.message}`);
+  if (error)
+    throw new Error(`Movies with frames query failed: ${error.message}`);
 
   const validIds = [...new Set(data.map((f) => f.movie_id))];
   _moviesWithFramesCache = validIds;
@@ -79,7 +80,7 @@ function buildQuestion(frame, correctMovie, allMovies) {
   return { frame, options, correctMovieId: correctMovie.id };
 }
 
-export async function loadQuestion() {
+export async function loadQuestion(usedFrameIds = []) {
   const [count, allMovies, validMovieIds] = await Promise.all([
     getFrameCount(),
     getAllMovies(),
@@ -90,19 +91,21 @@ export async function loadQuestion() {
   let correctMovie = null;
   let attempts = 0;
 
-  while (!correctMovie && attempts < 5) {
+  while (!correctMovie && attempts < 10) {
     attempts++;
     const offset = Math.floor(Math.random() * count);
 
     const { data: frames, error } = await supabase
-      .from('frames')
-      .select('id, movie_id, image_url, hint, blur_level')
-      .not('image_url', 'is', null)
+      .from("frames")
+      .select("id, movie_id, image_url, hint, blur_level")
+      .not("image_url", "is", null)
       .range(offset, offset);
 
     if (error || !frames?.length) continue;
 
     const candidate = frames[0];
+
+    if (usedFrameIds.includes(candidate.id)) continue;
 
     if (validMovieIds.includes(candidate.movie_id)) {
       frame = candidate;
@@ -111,7 +114,7 @@ export async function loadQuestion() {
   }
 
   if (!frame || !correctMovie) {
-    throw new Error('Could not load a valid question. Please add more frames.');
+    throw new Error("Could not load a valid question. Please add more frames.");
   }
 
   return buildQuestion(frame, correctMovie, allMovies);
