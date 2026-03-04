@@ -37,13 +37,9 @@ function ScoreBar({ score, index, total }) {
 
 function FrameDisplay({ frame }) {
   const [loaded, setLoaded] = useState(false);
-  const imgRef = useRef(null);
-  useEffect(() => {
-    setLoaded(false);
-    if (imgRef.current && imgRef.current.complete) {
-      setLoaded(true);
-    }
-  }, [frame.image_url]);
+
+  useEffect(() => setLoaded(false), [frame.image_url]);
+
   return (
     <div className="frame-wrapper">
       {!loaded && (
@@ -61,10 +57,9 @@ function FrameDisplay({ frame }) {
         </div>
       )}
       <img
-        ref={imgRef}
         src={frame.image_url}
         alt="Movie frame"
-        className={`frame-img ${loaded ? 'frame-visible' : 'frame-hidden'}`}
+        className={`frame-img ${loaded ? "frame-visible" : "frame-hidden"}`}
         onLoad={() => setLoaded(true)}
         onError={() => setLoaded(true)}
       />
