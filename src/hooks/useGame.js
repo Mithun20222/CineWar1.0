@@ -83,13 +83,8 @@ export function useGame() {
     if (timerRef.current) clearTimeout(timerRef.current);
     dispatch({ type: "RESTART" });
     dispatch({ type: "LOADING" });
-  }, []);
-
-  useEffect(() => {
-    if (state.phase === "loading") {
-      fetchNextQuestion();
-    }
-  }, [state.phase, fetchNextQuestion]);
+    fetchNextQuestion([]);
+  }, [fetchNextQuestion]);
 
   const selectAnswer = useCallback(
     (movieId) => {
@@ -108,6 +103,7 @@ export function useGame() {
           });
         } else {
           dispatch({ type: "NEXT_QUESTION" });
+          dispatch({ type: "LOADING" });
           fetchNextQuestion([...state.usedFrameIds, state.frame.id]);
         }
       }, FEEDBACK_DELAY_MS);
