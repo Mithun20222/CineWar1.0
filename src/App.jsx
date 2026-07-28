@@ -129,7 +129,7 @@ function OptionGrid({ options, selectedId, correctMovieId, phase, onSelect }) {
 function FeedbackBanner({ isCorrect }) {
   return (
     <div className={`feedback-banner ${isCorrect ? "fb-correct" : "fb-wrong"}`}>
-      {isCorrect ? "🎬 Correct! Great eye!" : "❌ Not quite..."}
+      {isCorrect ? "Correct! Great eye!" : "Not quite..."}
     </div>
   );
 }
